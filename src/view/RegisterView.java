@@ -3,10 +3,12 @@ package view;
 import controller.ManagementController;
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 public class RegisterView extends JFrame {
 
     private ManagementController controller;
+    private JButton btnBack;
 
     public RegisterView() {
         controller = new ManagementController();
@@ -101,6 +103,44 @@ public class RegisterView extends JFrame {
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // Tambahkan tombol kembali dengan GridBagConstraints
+        btnBack = new JButton("Kembali");
+        btnBack.setBackground(new Color(70, 130, 180));
+        btnBack.setForeground(Color.WHITE);
+        btnBack.setFont(new Font("Arial", Font.BOLD, 12));
+        
+        // Buat panel khusus untuk tombol back di mainPanel
+        JPanel backPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        backPanel.setOpaque(false);
+        backPanel.add(btnBack);
+        
+        // Atur layout untuk mainPanel
+        GridBagConstraints backGbc = new GridBagConstraints();
+        backGbc.gridx = 0;
+        backGbc.gridy = 0;
+        backGbc.anchor = GridBagConstraints.NORTHWEST;
+        backGbc.fill = GridBagConstraints.HORIZONTAL;
+        backGbc.insets = new Insets(10, 10, 0, 10);
+        mainPanel.add(backPanel, backGbc);
+        
+        // Tambahkan formPanel dengan constraint baru
+        GridBagConstraints formGbc = new GridBagConstraints();
+        formGbc.gridx = 0;
+        formGbc.gridy = 1;
+        formGbc.weightx = 1.0;
+        formGbc.weighty = 1.0;
+        formGbc.fill = GridBagConstraints.BOTH;
+        formGbc.insets = new Insets(20, 20, 20, 20);
+        mainPanel.add(formPanel, formGbc);
+        
+        btnBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginView().setVisible(true);
             }
         });
 
