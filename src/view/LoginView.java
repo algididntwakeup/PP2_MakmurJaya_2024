@@ -1,15 +1,14 @@
 package view;
 
-import controller.KurirController;
+import controller.ManagementController;
 import java.awt.*;
 import javax.swing.*;
-import mapper.UserMapper;
 import model.User;
 
 public class LoginView extends JFrame {
 
     public LoginView() {
-        setTitle("Login Kurir");
+        setTitle("Login Management");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -101,12 +100,12 @@ public class LoginView extends JFrame {
             }
 
             // Proses login
-            KurirController controller = new KurirController();
-            User user = controller.loginKurir(email, password);
+            ManagementController controller = new ManagementController();
+            User user = controller.loginManagement(email, password);
 
             if (user != null) {
                 JOptionPane.showMessageDialog(this, "Login berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                new DashboardView( user, controller.getSqlSessionFactory()).setVisible(true);  // Tambahkan SqlSessionFactory
+                new DashboardView(user, controller.getSqlSessionFactory()).setVisible(true);  // Tambahkan SqlSessionFactory
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Login gagal! Email atau password salah.", "Kesalahan", JOptionPane.ERROR_MESSAGE);

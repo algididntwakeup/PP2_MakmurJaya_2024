@@ -1,15 +1,15 @@
 package view;
 
-import controller.RegisterController;
+import controller.ManagementController;
 import java.awt.*;
 import javax.swing.*;
 
 public class RegisterView extends JFrame {
 
-    private RegisterController controller;
+    private ManagementController controller;
 
     public RegisterView() {
-        controller = new RegisterController();
+        controller = new ManagementController();
         setTitle("Registrasi Management");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,6 +41,11 @@ public class RegisterView extends JFrame {
         JLabel labelPassword = new JLabel("Password:");
         JPasswordField fieldPassword = new JPasswordField(20);
 
+//        JLabel labelKTP = new JLabel("Nomor KTP:");
+//        JTextField fieldKTP = new JTextField(20);
+//
+//        JLabel labelKK = new JLabel("Nomor KK:");
+//        JTextField fieldKK = new JTextField(20);
 
         JButton btnRegister = new JButton("Daftar");
         btnRegister.setBackground(new Color(70, 130, 180));
@@ -59,8 +64,6 @@ public class RegisterView extends JFrame {
                 return;
             }
 
-            
-            
             try {
                 boolean success = controller.registerManagement(nama, email, password);
                 if (success) {
@@ -96,6 +99,20 @@ public class RegisterView extends JFrame {
 
         gbc.gridx = 1;
         formPanel.add(fieldPassword, gbc);
+
+//        gbc.gridx = 0;
+//        gbc.gridy = 3;
+//        formPanel.add(labelKTP, gbc);
+//
+//        gbc.gridx = 1;
+//        formPanel.add(fieldKTP, gbc);
+//
+//        gbc.gridx = 0;
+//        gbc.gridy = 4;
+//        formPanel.add(labelKK, gbc);
+//
+//        gbc.gridx = 1;
+//        formPanel.add(fieldKK, gbc);
 
         gbc.gridx = 1;
         gbc.gridy = 5;
