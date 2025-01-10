@@ -9,7 +9,8 @@ public interface ProfileMapper {
     @Select("SELECT COUNT(*) FROM users WHERE id = #{userId}")
     int checkUserExists(int userId);
 
-    @Insert("INSERT INTO profiles (user_id, nama, foto, alamat, tanggal_lahir, no_rekening, fotokk, fotoktp) VALUES (#{userId}, #{nama}, #{foto}, #{alamat}, #{tanggalLahir}, #{noRekening}, #{fotokk}, #{fotoktp})")
+    @Insert("INSERT INTO profiles (user_id, nama, foto, alamat, tanggal_lahir) " +
+            "VALUES (#{userId}, #{nama}, #{foto}, #{alamat}, #{tanggalLahir})")
     void insertProfile(Profile profile);
 
     default void insertProfileWithValidation(Profile profile) throws Exception {

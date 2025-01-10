@@ -4,16 +4,10 @@
     <!-- Result Map untuk menangani BLOB dan tipe data kompleks -->
     <resultMap id="UserDocumentMap" type="model.UserDocument">
         <id property="id" column="id"/>
-        <result property="ktpNumber" column="ktp_number"/>
-        <result property="kkNumber" column="kk_number"/>
-        <result property="ktpImage" column="ktp_image" jdbcType="BLOB"/>
-        <result property="kkImage" column="kk_image" jdbcType="BLOB"/>
         <result property="profileImage" column="profile_image" jdbcType="BLOB"/>
         <result property="fullName" column="full_name"/>
         <result property="address" column="address"/>
         <result property="birthDate" column="birth_date"/>
-        <result property="bankAccount" column="bank_account"/>
-        <result property="eWallet" column="e_wallet"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
@@ -22,39 +16,31 @@
         SELECT * FROM user_document ORDER BY created_at DESC
     </select>
 
-    <select id="selectByKtp" parameterType="String" resultMap="UserDocumentMap">
-        SELECT * FROM user_document WHERE ktp_number = #{ktpNumber}
+    <select id="selectById" parameterType="int" resultMap="UserDocumentMap">
+        SELECT * FROM user_document WHERE id = #{id}
     </select>
 
     <insert id="insert" parameterType="model.UserDocument">
         INSERT INTO user_document (
-            ktp_number, kk_number, ktp_image, kk_image, profile_image,
-            full_name, address, birth_date, bank_account, e_wallet,
+            profile_image, full_name, address, birth_date,
             created_at, updated_at
         ) VALUES (
-                     #{ktpNumber}, #{kkNumber},
-                     #{ktpImage,jdbcType=BLOB}, #{kkImage,jdbcType=BLOB}, #{profileImage,jdbcType=BLOB},
-                     #{fullName}, #{address}, #{birthDate}, #{bankAccount}, #{eWallet},
-                     NOW(), NOW()
-                 )
+            #{profileImage,jdbcType=BLOB}, #{fullName}, #{address}, #{birthDate},
+            NOW(), NOW()
+        )
     </insert>
 
     <update id="update" parameterType="model.UserDocument">
         UPDATE user_document
-        SET kk_number = #{kkNumber},
-            ktp_image = #{ktpImage,jdbcType=BLOB},
-            kk_image = #{kkImage,jdbcType=BLOB},
-            profile_image = #{profileImage,jdbcType=BLOB},
+        SET profile_image = #{profileImage,jdbcType=BLOB},
             full_name = #{fullName},
             address = #{address},
             birth_date = #{birthDate},
-            bank_account = #{bankAccount},
-            e_wallet = #{eWallet},
             updated_at = NOW()
-        WHERE ktp_number = #{ktpNumber}
+        WHERE id = #{id}
     </update>
 
-    <delete id="delete" parameterType="String">
-        DELETE FROM user_document WHERE ktp_number = #{ktpNumber}
+    <delete id="delete" parameterType="int">
+        DELETE FROM user_document WHERE id = #{id}
     </delete>
 </mapper>

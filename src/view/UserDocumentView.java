@@ -22,13 +22,11 @@ import java.io.ByteArrayInputStream;
 public class UserDocumentView extends JFrame {
     private UserDocumentController controller;
     private User user;
-    private JTextField txtKtpNumber, txtKkNumber, txtFullName, txtAddress, txtBankAccount, txtEWallet;
+    private JTextField txtFullName, txtAddress;
     private JDateChooser dateChooser;
-    private JButton btnKtpImage, btnKkImage, btnProfileImage;
+    private JButton btnProfileImage;
     private JTable table;
-    private byte[] ktpImageData, kkImageData, profileImageData;
-    private JLabel lblKtpPreview;
-    private JLabel lblKkPreview;
+    private byte[] profileImageData;
     private JLabel lblProfilePreview;
     private final int PREVIEW_WIDTH = 150;
     private final int PREVIEW_HEIGHT = 200;
@@ -91,87 +89,33 @@ public class UserDocumentView extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(new JLabel("Nomor KTP:"), gbc);
-        gbc.gridx = 1;
-        txtKtpNumber = new JTextField(20);
-        formPanel.add(txtKtpNumber, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        formPanel.add(new JLabel("Nomor KK:"), gbc);
-        gbc.gridx = 1;
-        txtKkNumber = new JTextField(20);
-        formPanel.add(txtKkNumber, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 2;
         formPanel.add(new JLabel("Nama Lengkap:"), gbc);
         gbc.gridx = 1;
         txtFullName = new JTextField(20);
         formPanel.add(txtFullName, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 1;
         formPanel.add(new JLabel("Alamat:"), gbc);
         gbc.gridx = 1;
         txtAddress = new JTextField(20);
         formPanel.add(txtAddress, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 2;
         formPanel.add(new JLabel("Tanggal Lahir:"), gbc);
         gbc.gridx = 1;
         dateChooser = new JDateChooser();
         formPanel.add(dateChooser, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        formPanel.add(new JLabel("Bank Account:"), gbc);
-        gbc.gridx = 1;
-        txtBankAccount = new JTextField(20);
-        formPanel.add(txtBankAccount, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        formPanel.add(new JLabel("E-Wallet:"), gbc);
-        gbc.gridx = 1;
-        txtEWallet = new JTextField(20);
-        formPanel.add(txtEWallet, gbc);
-
         centerPanel.add(formPanel);
 
         // Image Preview Panel
         JPanel imagePanel = new JPanel(new GridBagLayout());
-        imagePanel.setBorder(BorderFactory.createTitledBorder("Preview Dokumen"));
-
-        // KTP Preview
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        imagePanel.add(new JLabel("KTP:"), gbc);
-        gbc.gridy = 1;
-        lblKtpPreview = new JLabel();
-        lblKtpPreview.setPreferredSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
-        lblKtpPreview.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        imagePanel.add(lblKtpPreview, gbc);
-        gbc.gridy = 2;
-        btnKtpImage = new JButton("Pilih KTP");
-        imagePanel.add(btnKtpImage, gbc);
-
-        // KK Preview
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        imagePanel.add(new JLabel("KK:"), gbc);
-        gbc.gridy = 1;
-        lblKkPreview = new JLabel();
-        lblKkPreview.setPreferredSize(new Dimension(PREVIEW_WIDTH, PREVIEW_HEIGHT));
-        lblKkPreview.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        imagePanel.add(lblKkPreview, gbc);
-        gbc.gridy = 2;
-        btnKkImage = new JButton("Pilih KK");
-        imagePanel.add(btnKkImage, gbc);
+        imagePanel.setBorder(BorderFactory.createTitledBorder("Foto Profil"));
 
         // Profile Preview
-        gbc.gridx = 2;
+        gbc.gridx = 0;
         gbc.gridy = 0;
         imagePanel.add(new JLabel("Foto Profil:"), gbc);
         gbc.gridy = 1;
@@ -208,8 +152,6 @@ public class UserDocumentView extends JFrame {
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Add action listeners for image buttons
-        btnKtpImage.addActionListener(e -> selectImage("KTP", lblKtpPreview));
-        btnKkImage.addActionListener(e -> selectImage("KK", lblKkPreview));
         btnProfileImage.addActionListener(e -> selectImage("Profile", lblProfilePreview));
 
         // Add action listeners for buttons
@@ -230,10 +172,13 @@ public class UserDocumentView extends JFrame {
         });
 
         btnDelete.addActionListener(e -> {
-            String ktpNumber = txtKtpNumber.getText();
-            if (!ktpNumber.isEmpty()) {
-                controller.deleteUserDocument(ktpNumber);
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow >= 0) {
+                int id = (Integer) table.getValueAt(selectedRow, 0);
+                controller.deleteUserDocument(id);
                 clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!");
             }
         });
 
@@ -252,6 +197,14 @@ public class UserDocumentView extends JFrame {
         // Add everything to frame
         add(mainPanel);
         pack();
+
+        // Update table columns
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("ID");
+        model.addColumn("Nama");
+        model.addColumn("Alamat");
+        model.addColumn("Tanggal Lahir");
+        table.setModel(model);
     }
 
     private void selectImage(String type, JLabel previewLabel) {
@@ -275,18 +228,7 @@ public class UserDocumentView extends JFrame {
             try {
                 byte[] imageData = controller.loadImageFile(selectedFile);
                 displayImagePreview(imageData, previewLabel);
-
-                switch (type) {
-                    case "KTP":
-                        ktpImageData = imageData;
-                        break;
-                    case "KK":
-                        kkImageData = imageData;
-                        break;
-                    case "Profile":
-                        profileImageData = imageData;
-                        break;
-                }
+                profileImageData = imageData;
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error loading image: " + ex.getMessage());
             }
@@ -313,14 +255,13 @@ public class UserDocumentView extends JFrame {
 
     private void displaySelectedData(int selectedRow) {
         try {
-            // Ambil data dari tabel
-            txtKtpNumber.setText((String) table.getValueAt(selectedRow, 0));
-            txtKkNumber.setText((String) table.getValueAt(selectedRow, 1));
-            txtFullName.setText((String) table.getValueAt(selectedRow, 2));
-            txtAddress.setText((String) table.getValueAt(selectedRow, 3));
+            // Get data from table
+            int id = (Integer) table.getValueAt(selectedRow, 0);
+            txtFullName.setText((String) table.getValueAt(selectedRow, 1));
+            txtAddress.setText((String) table.getValueAt(selectedRow, 2));
 
-            // Parse dan set tanggal lahir
-            String birthDateStr = (String) table.getValueAt(selectedRow, 4);
+            // Parse and set birth date
+            String birthDateStr = (String) table.getValueAt(selectedRow, 3);
             if (birthDateStr != null && !birthDateStr.isEmpty()) {
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -331,21 +272,10 @@ public class UserDocumentView extends JFrame {
                 }
             }
 
-            // Set bank account dan e-wallet
-            txtBankAccount.setText((String) table.getValueAt(selectedRow, 5));
-            txtEWallet.setText((String) table.getValueAt(selectedRow, 6));
-
-            // Ambil data gambar dari database
-            UserDocument doc = getSelectedDocument();
+            // Get document data from database
+            UserDocument doc = controller.getUserDocumentById(id);
             if (doc != null) {
-                // Set data gambar
-                ktpImageData = doc.getKtpImage();
-                kkImageData = doc.getKkImage();
                 profileImageData = doc.getProfileImage();
-
-                // Tampilkan preview gambar
-                displayImagePreview(ktpImageData, lblKtpPreview);
-                displayImagePreview(kkImageData, lblKkPreview);
                 displayImagePreview(profileImageData, lblProfilePreview);
             }
         } catch (Exception e) {
@@ -355,30 +285,20 @@ public class UserDocumentView extends JFrame {
     }
 
     private void clearForm() {
-        txtKtpNumber.setText("");
-        txtKkNumber.setText("");
         txtFullName.setText("");
         txtAddress.setText("");
-        txtBankAccount.setText("");
-        txtEWallet.setText("");
         dateChooser.setDate(null);
-
-        lblKtpPreview.setIcon(null);
-        lblKkPreview.setIcon(null);
         lblProfilePreview.setIcon(null);
-
-        ktpImageData = null;
-        kkImageData = null;
         profileImageData = null;
     }
 
     private UserDocument getSelectedDocument() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow >= 0) {
-            String ktpNumber = (String) table.getValueAt(selectedRow, 0);
+            int id = (Integer) table.getValueAt(selectedRow, 0);
             try (SqlSession session = controller.getSqlSessionFactory().openSession()) {
                 UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
-                return mapper.selectByKtp(ktpNumber);
+                return mapper.selectById(id);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -389,23 +309,16 @@ public class UserDocumentView extends JFrame {
 
     private UserDocument getFormData() {
         UserDocument doc = new UserDocument();
-        doc.setKtpNumber(txtKtpNumber.getText());
-        doc.setKkNumber(txtKkNumber.getText());
         doc.setFullName(txtFullName.getText());
         doc.setAddress(txtAddress.getText());
         doc.setBirthDate(dateChooser.getDate());
-        doc.setBankAccount(txtBankAccount.getText());
-        doc.setEWallet(txtEWallet.getText());
-        doc.setKtpImage(ktpImageData);
-        doc.setKkImage(kkImageData);
         doc.setProfileImage(profileImageData);
         return doc;
     }
 
     private boolean validateInput(UserDocument doc) {
-        if (doc.getKtpNumber().isEmpty() || doc.getKkNumber().isEmpty() ||
-                doc.getFullName().isEmpty() || doc.getAddress().isEmpty() ||
-                doc.getBirthDate() == null || doc.getBankAccount().isEmpty()) {
+        if (doc.getFullName().isEmpty() || doc.getAddress().isEmpty() ||
+                doc.getBirthDate() == null) {
             JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
             return false;
         }
@@ -413,29 +326,17 @@ public class UserDocumentView extends JFrame {
     }
 
     public void refreshTable(List<UserDocument> documents) {
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("No. KTP");
-        model.addColumn("No. KK");
-        model.addColumn("Nama");
-        model.addColumn("Alamat");
-        model.addColumn("Tanggal Lahir");
-        model.addColumn("No. Rekening");
-        model.addColumn("E-Wallet");
-
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
         for (UserDocument doc : documents) {
             model.addRow(new Object[]{
-                    doc.getKtpNumber(),
-                    doc.getKkNumber(),
+                    doc.getId(),
                     doc.getFullName(),
                     doc.getAddress(),
-                    doc.getBirthDate() != null ? sdf.format(doc.getBirthDate()) : "",
-                    doc.getBankAccount(),
-                    doc.getEWallet()
+                    doc.getBirthDate() != null ? sdf.format(doc.getBirthDate()) : ""
             });
         }
-
-        table.setModel(model);
     }
 }

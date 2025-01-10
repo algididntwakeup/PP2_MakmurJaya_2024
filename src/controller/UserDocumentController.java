@@ -80,23 +80,22 @@ public class UserDocumentController {
 
     // Method untuk validasi data
     private void validasiDokumen(UserDocument doc) throws Exception {
-        if (doc.getKtpNumber() == null || doc.getKtpNumber().trim().isEmpty()) {
-            throw new Exception("Nomor KTP wajib diisi");
-        }
-        if (doc.getKkNumber() == null || doc.getKkNumber().trim().isEmpty()) {
-            throw new Exception("Nomor KK wajib diisi");
-        }
         if (doc.getFullName() == null || doc.getFullName().trim().isEmpty()) {
             throw new Exception("Nama Lengkap wajib diisi");
         }
-        // Tambahkan validasi lainnya sesuai kebutuhan
+        if (doc.getAddress() == null || doc.getAddress().trim().isEmpty()) {
+            throw new Exception("Alamat wajib diisi");
+        }
+        if (doc.getBirthDate() == null) {
+            throw new Exception("Tanggal Lahir wajib diisi");
+        }
     }
 
     // Method untuk menghapus dokumen
-    public void deleteUserDocument(String ktpNumber) {
+    public void deleteUserDocument(int id) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
             UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
-            mapper.delete(ktpNumber);
+            mapper.delete(id);
             session.commit();
             JOptionPane.showMessageDialog(view, "Data berhasil dihapus!");
             refreshTable();
@@ -114,11 +113,11 @@ public class UserDocumentController {
         }
     }
 
-    // Method untuk mengambil dokumen berdasarkan KTP
-    public UserDocument getUserDocumentByKtp(String ktpNumber) {
+    // Method untuk mengambil dokumen berdasarkan ID
+    public UserDocument getUserDocumentById(int id) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
             UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
-            return mapper.selectByKtp(ktpNumber);
+            return mapper.selectById(id);
         }
     }
 

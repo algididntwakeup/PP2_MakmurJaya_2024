@@ -141,12 +141,9 @@ public class RegisterView extends JFrame {
         formGbc.insets = new Insets(20, 20, 20, 20);
         mainPanel.add(formPanel, formGbc);
         
-        btnBack.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                new LoginView().setVisible(true);
-            }
+        btnBack.addActionListener(e -> {
+            dispose();
+            new LoginView().setVisible(true);
         });
 
         // Add title components to titlePanel

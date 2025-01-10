@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface UserDocumentMapper {
     List<UserDocument> selectAll();
-    UserDocument selectByKtp(String ktpNumber);
+    UserDocument selectById(int id);
     void insert(UserDocument userDocument);
     void update(UserDocument userDocument);
-    void delete(String ktpNumber);
+    void delete(int id);
 }
