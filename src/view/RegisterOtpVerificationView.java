@@ -5,31 +5,53 @@ import java.awt.*;
 import javax.swing.*;
 
 public class RegisterOtpVerificationView extends JFrame {
-    private String nama;
     private String email;
     private String password;
     private String correctOtp;
     private JFrame previousFrame;
     private ManagementController controller;
 
-    public RegisterOtpVerificationView(String nama, String email, String password, String otp, JFrame previousFrame) {
-        this.nama = nama;
+    public RegisterOtpVerificationView(String email, String password, String otp, JFrame previousFrame) {
         this.email = email;
         this.password = password;
         this.correctOtp = otp;
         this.previousFrame = previousFrame;
         this.controller = new ManagementController();
         
-        setTitle("Verifikasi OTP Registrasi");
-        setSize(400, 300);
+        setTitle("Verifikasi OTP");
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));
+        // Panel Latar Belakang dengan gradient hijau
+        JPanel mainPanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, new Color(34, 139, 34),
+                    0, getHeight(), new Color(144, 238, 144)
+                );
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
 
-        JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBackground(new Color(245, 245, 245));
+        // Semi-transparent panel
+        JPanel formPanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(new Color(255, 255, 255, 200));
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+            }
+        };
+        formPanel.setOpaque(false);
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
@@ -51,7 +73,7 @@ public class RegisterOtpVerificationView extends JFrame {
 
             if (inputOtp.equals(correctOtp)) {
                 try {
-                    boolean success = controller.registerManagement(nama, email, password);
+                    boolean success = controller.registerManagement(email, password);
                     if (success) {
                         JOptionPane.showMessageDialog(this, "Registrasi Berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
                         new LoginView().setVisible(true);
@@ -72,7 +94,19 @@ public class RegisterOtpVerificationView extends JFrame {
             }
         });
 
-        // Add instruction label
+        // Add components to mainPanel using GridBagConstraints
+        GridBagConstraints mainGbc = new GridBagConstraints();
+        mainGbc.gridx = 0;
+        mainGbc.gridy = 0;
+        mainGbc.weightx = 1.0;
+        mainGbc.weighty = 1.0;
+        mainGbc.fill = GridBagConstraints.BOTH;
+        mainGbc.insets = new Insets(20, 20, 20, 20);
+        
+        // Add formPanel to mainPanel
+        mainPanel.add(formPanel, mainGbc);
+
+        // Add components to form panel
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
@@ -93,7 +127,6 @@ public class RegisterOtpVerificationView extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         formPanel.add(btnSubmit, gbc);
 
-        mainPanel.add(formPanel, BorderLayout.CENTER);
         add(mainPanel);
 
         // Add window listener to show previous frame if this one is closed

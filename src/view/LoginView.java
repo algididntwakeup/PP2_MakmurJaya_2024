@@ -9,17 +9,22 @@ public class LoginView extends JFrame {
 
     public LoginView() {
         setTitle("Login Management");
-        setSize(500, 400);
+        setSize(500, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Panel Latar Belakang
+        // Panel Latar Belakang dengan gradient hijau
         JPanel mainPanel = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                g2d.setPaint(new GradientPaint(0, 0, Color.WHITE, getWidth(), getHeight(), new Color(230, 230, 250)));
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, new Color(34, 139, 34), // Forest Green
+                    0, getHeight(), new Color(144, 238, 144) // Light Green
+                );
+                g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }
         };
@@ -27,88 +32,144 @@ public class LoginView extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15);
 
-        // Judul Login
+        // Panel untuk login form dengan background semi-transparan
+        JPanel loginPanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(new Color(255, 255, 255, 200));
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+            }
+        };
+        loginPanel.setOpaque(false);
+
+        // Title Panel
+        JPanel titlePanel = new JPanel(new GridBagLayout());
+        titlePanel.setOpaque(false);
+        
+        // Login Title with custom font and shadow effect
         JLabel titleLabel = new JLabel("LOGIN");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 36));
-        titleLabel.setForeground(new Color(50, 50, 50));
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        mainPanel.add(titleLabel, gbc);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 40));
+        titleLabel.setForeground(Color.BLACK);
+        
+        // Subtitle "Management"
+        JLabel subtitleLabel = new JLabel("E-Waste Management");
+        subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 20));
+        subtitleLabel.setForeground(Color.BLACK);
 
-        // Label dan Field Email
-        JLabel labelEmail = new JLabel("Email:");
-        labelEmail.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        JTextField fieldEmail = new JTextField(15);
-        fieldEmail.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        GridBagConstraints titleGbc = new GridBagConstraints();
+        titleGbc.gridx = 0;
+        titleGbc.gridy = 0;
+        titleGbc.insets = new Insets(0, 0, 5, 0);
+        titlePanel.add(titleLabel, titleGbc);
 
-        gbc.gridwidth = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        mainPanel.add(labelEmail, gbc);
+        titleGbc.gridy = 1;
+        titleGbc.insets = new Insets(0, 0, 20, 0);
+        titlePanel.add(subtitleLabel, titleGbc);
 
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        mainPanel.add(fieldEmail, gbc);
+        // Input Fields with rounded borders and icons
+        JTextField fieldEmail = new JTextField(20);
+        JPasswordField fieldPassword = new JPasswordField(20);
+        
+        // Styling input fields
+        fieldEmail.setPreferredSize(new Dimension(250, 35));
+        fieldPassword.setPreferredSize(new Dimension(250, 35));
+        
+        // Custom border for input fields
+        fieldEmail.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        fieldPassword.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
 
-        // Label dan Field Password
-        JLabel labelPassword = new JLabel("Password:");
-        labelPassword.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-        JPasswordField fieldPassword = new JPasswordField(15);
-        fieldPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        // Labels
+        JLabel labelEmail = new JLabel("Email");
+        JLabel labelPassword = new JLabel("Password");
+        labelEmail.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        labelPassword.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        labelEmail.setForeground(new Color(50, 50, 50));
+        labelPassword.setForeground(new Color(50, 50, 50));
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        mainPanel.add(labelPassword, gbc);
+        // Buttons with hover effect
+        JButton btnLogin = createStyledButton("Login", new Color(34, 139, 34));  // Forest Green
+        JButton btnRegister = createStyledButton("Daftar", new Color(46, 139, 87));  // Sea Green
+        JButton btnForgotPassword = createStyledButton("Lupa Password?", new Color(178, 34, 34));  // Firebrick
 
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        mainPanel.add(fieldPassword, gbc);
+        // Add components to login panel
+        GridBagConstraints loginGbc = new GridBagConstraints();
+        loginGbc.gridx = 0;
+        loginGbc.gridy = 0;
+        loginGbc.gridwidth = 2;
+        loginGbc.insets = new Insets(20, 20, 30, 20);
+        loginPanel.add(titlePanel, loginGbc);
 
-        // Panel Tombol
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
+        // Email field
+        loginGbc.gridy = 1;
+        loginGbc.gridwidth = 2;
+        loginGbc.anchor = GridBagConstraints.WEST;
+        loginGbc.insets = new Insets(5, 20, 5, 20);
+        loginPanel.add(labelEmail, loginGbc);
+
+        loginGbc.gridy = 2;
+        loginGbc.fill = GridBagConstraints.HORIZONTAL;
+        loginGbc.gridwidth = 2;
+        loginPanel.add(fieldEmail, loginGbc);
+
+        // Password field
+        loginGbc.gridy = 3;
+        loginGbc.fill = GridBagConstraints.NONE;
+        loginGbc.gridwidth = 2;
+        loginPanel.add(labelPassword, loginGbc);
+
+        loginGbc.gridy = 4;
+        loginGbc.fill = GridBagConstraints.HORIZONTAL;
+        loginGbc.gridwidth = 2;
+        loginPanel.add(fieldPassword, loginGbc);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         buttonPanel.setOpaque(false);
-
-        JButton btnLogin = createStyledButton("Login", new Color(0, 120, 215));
-        JButton btnRegister = createStyledButton("Daftar", new Color(34, 139, 34));
-        JButton btnForgotPassword = createStyledButton("Lupa Password", new Color(255, 69, 0));
-
         buttonPanel.add(btnLogin);
         buttonPanel.add(btnRegister);
 
+        loginGbc.gridy = 5;
+        loginGbc.gridwidth = 2;
+        loginGbc.insets = new Insets(20, 20, 10, 20);
+        loginPanel.add(buttonPanel, loginGbc);
+
+        loginGbc.gridy = 6;
+        loginGbc.insets = new Insets(0, 20, 20, 20);
+        loginPanel.add(btnForgotPassword, loginGbc);
+
+        // Add login panel to main panel
         gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        mainPanel.add(buttonPanel, gbc);
+        gbc.gridy = 0;
+        mainPanel.add(loginPanel, gbc);
 
-        gbc.gridy = 4; // Posisi tombol Lupa Password di bawah buttonPanel
-        gbc.gridwidth = 2; // Tombol memakan 2 kolom
-        gbc.anchor = GridBagConstraints.CENTER; // Posisi di tengah
-        mainPanel.add(btnForgotPassword, gbc);
-
-        // Tambahkan kotak border di seluruh panel utama
-        mainPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-
-        // Aksi Tombol
+        // Action Listeners
         btnLogin.addActionListener(e -> {
             String email = fieldEmail.getText().trim();
             String password = new String(fieldPassword.getPassword()).trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Email dan password harus diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                showErrorMessage("Email dan password harus diisi!");
                 return;
             }
 
-            // Proses login
             ManagementController controller = new ManagementController();
             User user = controller.loginManagement(email, password);
 
             if (user != null) {
-                JOptionPane.showMessageDialog(this, "Login berhasil!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-                new DashboardView(user, controller.getSqlSessionFactory()).setVisible(true);  // Tambahkan SqlSessionFactory
+                showSuccessMessage("Login berhasil!");
+                new DashboardView(user, controller.getSqlSessionFactory()).setVisible(true);
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Login gagal! Email atau password salah.", "Kesalahan", JOptionPane.ERROR_MESSAGE);
+                showErrorMessage("Login gagal! Email atau password salah.");
             }
         });
 
@@ -117,31 +178,56 @@ public class LoginView extends JFrame {
             this.dispose();
         });
 
-        // Tambahkan dalam konstruktor LoginView
         btnForgotPassword.addActionListener(e -> {
             new ForgotPasswordView().setVisible(true);
             this.dispose();
         });
 
-
-        // Menambahkan mainPanel ke Frame
         add(mainPanel);
     }
 
-    // Method untuk membuat tombol dengan desain modern
     private JButton createStyledButton(String text, Color color) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        button.setBackground(color);
+        JButton button = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isPressed()) {
+                    g2.setColor(color.darker());
+                } else if (getModel().isRollover()) {
+                    g2.setColor(color.brighter());
+                } else {
+                    g2.setColor(color);
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
         button.setForeground(Color.WHITE);
-        button.setPreferredSize(new Dimension(150, 45));
+        button.setPreferredSize(new Dimension(120, 40));
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createLineBorder(color.darker(), 2, true));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
     }
 
+    private void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSuccessMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Success", JOptionPane.INFORMATION_MESSAGE);
+    }
+
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(() -> new LoginView().setVisible(true));
     }
 }

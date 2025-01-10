@@ -77,7 +77,7 @@ public class ManagementController {
         }
     }
 
-    // Login Kurir
+    // Login Management
     public User loginManagement(String email, String password) {
         try (SqlSession session = MyBatisUtil.getSqlSessionFactory().openSession()) {
             UserMapper userMapper = session.getMapper(UserMapper.class);

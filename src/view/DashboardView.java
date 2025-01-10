@@ -13,73 +13,143 @@ public class DashboardView extends JFrame {
     public DashboardView(User user, SqlSessionFactory sqlSessionFactory) {
         this.user = user;
         this.sqlSessionFactory = sqlSessionFactory;
-        setTitle("Dashboard Kurir");
+        setTitle("Dashboard Management");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Panel utama
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(245, 245, 245));
+        // Panel Latar Belakang dengan gradient hijau
+        JPanel mainPanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                GradientPaint gradient = new GradientPaint(
+                    0, 0, new Color(34, 139, 34), // Forest Green
+                    0, getHeight(), new Color(144, 238, 144) // Light Green
+                );
+                g2d.setPaint(gradient);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
 
-        // label selamat datang
+        // Panel untuk content dengan background semi-transparan
+        JPanel contentPanel = new JPanel(new GridBagLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setColor(new Color(255, 255, 255, 200));
+                g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+            }
+        };
+        contentPanel.setOpaque(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Welcome label
         JLabel welcomeLabel = new JLabel("Selamat datang, " + user.getEmail() + "!");
-        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        welcomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        welcomeLabel.setForeground(Color.BLACK);
         welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        welcomeLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonPanel.setBackground(new Color(245, 245, 245));
+        // Subtitle
+        JLabel subtitleLabel = new JLabel("E-Waste Management");
+        subtitleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+        subtitleLabel.setForeground(Color.BLACK);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Tombol Dokumen User
-        JButton btnDocument = new JButton("Dokumen User");
-        btnDocument.setFont(new Font("Arial", Font.BOLD, 16));
-        btnDocument.setBackground(new Color(70, 130, 180));
-        btnDocument.setForeground(Color.WHITE);
-        btnDocument.setPreferredSize(new Dimension(200, 40));
-        btnDocument.setFocusPainted(false);
-        btnDocument.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Button Panel
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
 
+        // Create styled buttons
+        JButton btnDocument = createStyledButton("Dokumen User", new Color(34, 139, 34));  // Forest Green
+        JButton btnOrder = createStyledButton("Halaman Order", new Color(46, 139, 87));    // Sea Green
+        JButton btnLogout = createStyledButton("Logout", new Color(178, 34, 34));          // Firebrick
+
+        // Add action listeners
         btnDocument.addActionListener(e -> {
             UserDocumentController controller = new UserDocumentController(sqlSessionFactory, user);
-            // Teruskan user ke UserDocumentView
             this.dispose();
         });
-        // tombol ke halaman order
-        JButton btnOrder = new JButton("Halaman Order");
-        btnOrder.setFont(new Font("Arial", Font.BOLD, 16));
-        btnOrder.setBackground(new Color(70, 130, 180));
-        btnOrder.setForeground(Color.WHITE);
-        btnOrder.setPreferredSize(new Dimension(200, 40));
-        btnOrder.setFocusPainted(false);
-        btnOrder.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnOrder.addActionListener(e -> {
-            new OrderView(user, sqlSessionFactory).setVisible(true);  // Tambah SqlSessionFactory
+            new OrderView(user, sqlSessionFactory).setVisible(true);
             this.dispose();
         });
-
-        // tombol logout
-        JButton btnLogout = new JButton("Logout");
-        btnLogout.setFont(new Font("Arial", Font.BOLD, 16));
-        btnLogout.setBackground(new Color(220, 20, 60));
-        btnLogout.setForeground(Color.WHITE);
-        btnLogout.setPreferredSize(new Dimension(200, 40));
-        btnLogout.setFocusPainted(false);
-        btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnLogout.addActionListener(e -> {
             new LoginView().setVisible(true);
             this.dispose();
         });
 
-        buttonPanel.add(btnDocument);
-        buttonPanel.add(btnOrder);
-        buttonPanel.add(btnLogout);
+        // Add components to content panel
+        GridBagConstraints contentGbc = new GridBagConstraints();
+        contentGbc.gridx = 0;
+        contentGbc.gridy = 0;
+        contentGbc.gridwidth = 1;
+        contentGbc.insets = new Insets(20, 20, 5, 20);
+        contentPanel.add(welcomeLabel, contentGbc);
 
-        mainPanel.add(welcomeLabel, BorderLayout.NORTH);
-        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        contentGbc.gridy = 1;
+        contentGbc.insets = new Insets(0, 20, 30, 20);
+        contentPanel.add(subtitleLabel, contentGbc);
+
+        // Add buttons
+        contentGbc.gridy = 2;
+        contentGbc.insets = new Insets(10, 20, 10, 20);
+        contentGbc.fill = GridBagConstraints.HORIZONTAL;
+        contentPanel.add(btnDocument, contentGbc);
+
+        contentGbc.gridy = 3;
+        contentPanel.add(btnOrder, contentGbc);
+
+        contentGbc.gridy = 4;
+        contentGbc.insets = new Insets(10, 20, 20, 20);
+        contentPanel.add(btnLogout, contentGbc);
+
+        // Add content panel to main panel
+        GridBagConstraints mainGbc = new GridBagConstraints();
+        mainGbc.gridx = 0;
+        mainGbc.gridy = 0;
+        mainGbc.weightx = 1.0;
+        mainGbc.weighty = 1.0;
+        mainGbc.fill = GridBagConstraints.BOTH;
+        mainGbc.insets = new Insets(20, 20, 20, 20);
+        mainPanel.add(contentPanel, mainGbc);
 
         add(mainPanel);
+    }
+
+    private JButton createStyledButton(String text, Color color) {
+        JButton button = new JButton(text) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isPressed()) {
+                    g2.setColor(color.darker());
+                } else if (getModel().isRollover()) {
+                    g2.setColor(color.brighter());
+                } else {
+                    g2.setColor(color);
+                }
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setForeground(Color.WHITE);
+        button.setPreferredSize(new Dimension(200, 45));
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return button;
     }
 }
