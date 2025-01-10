@@ -57,15 +57,14 @@ public class ManagementController {
         }
 
     // Register Management
-    public boolean registerManagement(String nama, String email, String password) {
+    public boolean registerManagement(String email, String password) {
         try (SqlSession session = MyBatisUtil.getSqlSessionFactory().openSession()) {
             UserMapper userMapper = session.getMapper(UserMapper.class);
 
             // Hash password sebelum ke database
             String hashedPassword = PasswordHasher.hashPassword(password);
-            // System.out.println("Register - Hashed Password: " + hashedPassword); // Debug
 
-            User user = new User(0, email,hashedPassword);
+            User user = new User(0, email, hashedPassword);
 
             // Insert user ke database
             userMapper.insertUser(user);
