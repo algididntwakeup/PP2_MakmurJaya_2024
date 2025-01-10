@@ -1,6 +1,6 @@
 package view;
 
-import controller.ManagementController;
+import controller.RegisterController;
 import java.awt.*;
 import javax.swing.*;
 
@@ -9,14 +9,14 @@ public class RegisterOtpVerificationView extends JFrame {
     private String password;
     private String correctOtp;
     private JFrame previousFrame;
-    private ManagementController controller;
+    private RegisterController controller;
 
     public RegisterOtpVerificationView(String email, String password, String otp, JFrame previousFrame) {
         this.email = email;
         this.password = password;
         this.correctOtp = otp;
         this.previousFrame = previousFrame;
-        this.controller = new ManagementController();
+        this.controller = new RegisterController();
         
         setTitle("Verifikasi OTP");
         setSize(500, 400);

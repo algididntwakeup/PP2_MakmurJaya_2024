@@ -1,6 +1,6 @@
 package view;
 
-import controller.ManagementController;
+import controller.LoginController;
 import java.awt.*;
 import javax.swing.*;
 import model.User;
@@ -161,7 +161,7 @@ public class LoginView extends JFrame {
                 return;
             }
 
-            ManagementController controller = new ManagementController();
+            LoginController controller = new LoginController();
             User user = controller.loginManagement(email, password);
 
             if (user != null) {

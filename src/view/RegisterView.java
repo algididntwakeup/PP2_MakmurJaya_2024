@@ -1,17 +1,22 @@
 package view;
 
-import controller.ManagementController;
+import controller.OtpController;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
 public class RegisterView extends JFrame {
 
-    private ManagementController controller;
+
+    private OtpController OtpController;
+    
     private JButton btnBack;
 
     public RegisterView() {
-        controller = new ManagementController();
+  
+        OtpController = new OtpController();
+        
         setTitle("Registrasi Management");
         setSize(500, 450);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,8 +96,8 @@ public class RegisterView extends JFrame {
 
             try {
                 // Generate and send OTP
-                String otp = controller.generateOTP();
-                boolean otpSent = controller.sendOtpToEmail(email, otp);
+                String otp = OtpController.generateOTP();
+                boolean otpSent = OtpController.sendOtpRegister(email, otp);
                 
                 if (otpSent) {
                     // Create a custom OtpVerificationView for registration
@@ -194,20 +199,6 @@ public class RegisterView extends JFrame {
 
         gbc.gridx = 1;
         formPanel.add(fieldPassword, gbc);
-
-//        gbc.gridx = 0;
-//        gbc.gridy = 3;
-//        formPanel.add(labelKTP, gbc);
-//
-//        gbc.gridx = 1;
-//        formPanel.add(fieldKTP, gbc);
-//
-//        gbc.gridx = 0;
-//        gbc.gridy = 4;
-//        formPanel.add(labelKK, gbc);
-//
-//        gbc.gridx = 1;
-//        formPanel.add(fieldKK, gbc);
 
         // Register button
         gbc.gridx = 0;

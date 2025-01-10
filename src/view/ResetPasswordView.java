@@ -1,17 +1,17 @@
 package view;
 
-import controller.ManagementController;
+import controller.ResetPasswordController;
 import java.awt.*;
 import javax.swing.*;
 
 public class ResetPasswordView extends JFrame {
 
-    private ManagementController controller;
+    private ResetPasswordController controller;
     private String email;
 
     public ResetPasswordView(String email) {
         this.email = email;
-        controller = new ManagementController();
+        controller = new ResetPasswordController();
         setTitle("Reset Password");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

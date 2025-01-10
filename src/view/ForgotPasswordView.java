@@ -1,15 +1,16 @@
 package view;
 
-import controller.ManagementController;
+import controller.OtpController;
 import java.awt.*;
 import javax.swing.*;
 
 public class ForgotPasswordView extends JFrame {
 
-    private ManagementController controller;
+    private OtpController controller;
+
 
     public ForgotPasswordView() {
-        controller = new ManagementController();
+        controller = new OtpController();
         setTitle("Lupa Password");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,7 +83,7 @@ public class ForgotPasswordView extends JFrame {
 
             try {
                 String otp = controller.generateOTP();
-                boolean success = controller.sendOtpToEmail(email, otp);
+                boolean success = controller.sendOtpResetPassword(email, otp);
                 if (success) {
                     new OtpVerificationView(email, otp).setVisible(true);
                     this.dispose();
