@@ -39,7 +39,7 @@ public class UserDocumentView extends JFrame {
     }
 
     private void initComponents() {
-        setTitle("Manajemen Dokumen User");
+        setTitle("Profile User");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
@@ -149,13 +149,11 @@ public class UserDocumentView extends JFrame {
         JPanel buttonPanel = new JPanel();
         JButton btnSave = new JButton("Simpan");
         JButton btnUpdate = new JButton("Update");
-        JButton btnDelete = new JButton("Hapus");
         JButton btnClear = new JButton("Clear");
         JButton btnChangePassword = new JButton("Ubah Password");
 
         buttonPanel.add(btnSave);
         buttonPanel.add(btnUpdate);
-        buttonPanel.add(btnDelete);
         buttonPanel.add(btnClear);
         buttonPanel.add(btnChangePassword);
 
@@ -186,17 +184,6 @@ public class UserDocumentView extends JFrame {
             if (validateInput(doc)) {
                 controller.updateUserDocument(doc);
                 clearForm();
-            }
-        });
-
-        btnDelete.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow >= 0) {
-                int id = (Integer) table.getValueAt(selectedRow, 0);
-                controller.deleteUserDocument(id);
-                clearForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Pilih data yang akan dihapus!");
             }
         });
 
@@ -340,6 +327,7 @@ public class UserDocumentView extends JFrame {
 
     private UserDocument getFormData() {
         UserDocument doc = new UserDocument();
+        doc.setId(user.getId());
         doc.setFullName(txtFullName.getText());
         doc.setAddress(txtAddress.getText());
         doc.setBirthDate(dateChooser.getDate());

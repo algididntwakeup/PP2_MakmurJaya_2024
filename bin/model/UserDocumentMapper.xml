@@ -48,8 +48,4 @@
             updated_at = NOW()
         WHERE id = #{id}
     </update>
-
-    <delete id="delete" parameterType="int">
-        DELETE FROM users WHERE id = #{id}
-    </delete>
 </mapper>

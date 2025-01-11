@@ -7,5 +7,4 @@ public interface UserDocumentMapper {
     UserDocument selectById(int id);
     void insert(UserDocument userDocument);
     void update(UserDocument userDocument);
-    void delete(int id);
 }
