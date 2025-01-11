@@ -1,46 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="model.UserDocumentMapper">
-    <!-- Result Map untuk menangani BLOB dan tipe data kompleks -->
     <resultMap id="UserDocumentMap" type="model.UserDocument">
         <id property="id" column="id"/>
-        <result property="profileImage" column="profile_image" jdbcType="BLOB"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
         <result property="fullName" column="full_name"/>
         <result property="address" column="address"/>
         <result property="birthDate" column="birth_date"/>
+        <result property="gender" column="gender"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="profileImage" column="profile_image" jdbcType="BLOB"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
-    <select id="selectAll" resultMap="UserDocumentMap">
-        SELECT * FROM user_document ORDER BY created_at DESC
+    <select id="selectAll" parameterType="int" resultMap="UserDocumentMap">
+        SELECT * FROM users 
+        WHERE id = #{userId}
+        ORDER BY created_at DESC
     </select>
 
     <select id="selectById" parameterType="int" resultMap="UserDocumentMap">
-        SELECT * FROM user_document WHERE id = #{id}
+        SELECT * FROM users WHERE id = #{id}
     </select>
 
     <insert id="insert" parameterType="model.UserDocument">
-        INSERT INTO user_document (
-            profile_image, full_name, address, birth_date,
-            created_at, updated_at
-        ) VALUES (
-            #{profileImage,jdbcType=BLOB}, #{fullName}, #{address}, #{birthDate},
-            NOW(), NOW()
-        )
+        UPDATE users
+        SET full_name = #{fullName},
+            address = #{address},
+            birth_date = #{birthDate},
+            gender = #{gender},
+            phone_number = #{phoneNumber},
+            profile_image = #{profileImage,jdbcType=BLOB},
+            updated_at = NOW()
+        WHERE id = #{id}
     </insert>
 
     <update id="update" parameterType="model.UserDocument">
-        UPDATE user_document
-        SET profile_image = #{profileImage,jdbcType=BLOB},
-            full_name = #{fullName},
+        UPDATE users
+        SET full_name = #{fullName},
             address = #{address},
             birth_date = #{birthDate},
+            gender = #{gender},
+            phone_number = #{phoneNumber},
+            profile_image = #{profileImage,jdbcType=BLOB},
             updated_at = NOW()
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="int">
-        DELETE FROM user_document WHERE id = #{id}
+        DELETE FROM users WHERE id = #{id}
     </delete>
 </mapper>

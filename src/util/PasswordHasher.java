@@ -13,11 +13,15 @@ public class PasswordHasher {
             for (byte b : hashedBytes) {
                 sb.append(String.format("%02x", b));
             }
-            // System.out.println("Generated Hash: " + sb.toString()); // Debug
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static boolean checkPassword(String password, String hashedPassword) {
+        String hashedInput = hashPassword(password);
+        return hashedInput != null && hashedInput.equals(hashedPassword);
     }
 }

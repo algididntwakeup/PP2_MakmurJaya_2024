@@ -29,17 +29,32 @@ public class UserDocumentController {
         SwingUtilities.invokeLater(() -> {
             this.view = new UserDocumentView(this, user);
             this.view.setVisible(true);
+            loadUserData();
             refreshTable();
         });
     }
 
+    private void loadUserData() {
+        try (SqlSession session = sqlSessionFactory.openSession()) {
+            UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
+            UserDocument userDoc = mapper.selectById(user.getId());
+            if (userDoc != null) {
+                view.displayUserData(userDoc);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(view, "Error loading user data: " + e.getMessage());
+        }
+    }
+
     public void saveUserDocument(UserDocument doc) {
         try (SqlSession session = sqlSessionFactory.openSession()) {
+            // Set the user ID from the logged-in user
+            doc.setId(user.getId());
+            
             // Set waktu pembuatan dan update
             LocalDateTime now = LocalDateTime.now();
-            // Konversi LocalDateTime ke Date
             Date date = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
-
             doc.setCreatedAt(date);
             doc.setUpdatedAt(date);
 
@@ -53,7 +68,7 @@ public class UserDocumentController {
             refreshTable();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view, "Error: " + e.getMessage());
-            e.printStackTrace(); // Untuk debugging
+            e.printStackTrace();
         }
     }
 
@@ -109,7 +124,7 @@ public class UserDocumentController {
     public List<UserDocument> getAllUserDocuments() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
             UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
-            return mapper.selectAll();
+            return mapper.selectAll(user.getId());
         }
     }
 
