@@ -327,6 +327,7 @@ public class UserDocumentView extends JFrame {
 
     private UserDocument getFormData() {
         UserDocument doc = new UserDocument();
+        doc.setId(user.getId());
         doc.setFullName(txtFullName.getText());
         doc.setAddress(txtAddress.getText());
         doc.setBirthDate(dateChooser.getDate());
