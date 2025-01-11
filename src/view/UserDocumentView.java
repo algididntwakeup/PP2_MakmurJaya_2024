@@ -22,7 +22,8 @@ import java.io.ByteArrayInputStream;
 public class UserDocumentView extends JFrame {
     private UserDocumentController controller;
     private User user;
-    private JTextField txtFullName, txtAddress;
+    private JTextField txtFullName, txtAddress, txtPhoneNumber;
+    private JComboBox<String> comboGender;
     private JDateChooser dateChooser;
     private JButton btnProfileImage;
     private JTable table;
@@ -108,6 +109,21 @@ public class UserDocumentView extends JFrame {
         dateChooser = new JDateChooser();
         formPanel.add(dateChooser, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        formPanel.add(new JLabel("Jenis Kelamin:"), gbc);
+        gbc.gridx = 1;
+        String[] genderOptions = {"Laki-laki", "Perempuan"};
+        comboGender = new JComboBox<>(genderOptions);
+        formPanel.add(comboGender, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        formPanel.add(new JLabel("No. Telepon:"), gbc);
+        gbc.gridx = 1;
+        txtPhoneNumber = new JTextField(20);
+        formPanel.add(txtPhoneNumber, gbc);
+
         centerPanel.add(formPanel);
 
         // Image Preview Panel
@@ -135,11 +151,13 @@ public class UserDocumentView extends JFrame {
         JButton btnUpdate = new JButton("Update");
         JButton btnDelete = new JButton("Hapus");
         JButton btnClear = new JButton("Clear");
+        JButton btnChangePassword = new JButton("Ubah Password");
 
         buttonPanel.add(btnSave);
         buttonPanel.add(btnUpdate);
         buttonPanel.add(btnDelete);
         buttonPanel.add(btnClear);
+        buttonPanel.add(btnChangePassword);
 
         centerPanel.add(buttonPanel);
 
@@ -184,6 +202,10 @@ public class UserDocumentView extends JFrame {
 
         btnClear.addActionListener(e -> clearForm());
 
+        btnChangePassword.addActionListener(e -> {
+            new ChangePasswordView(user, controller.getSqlSessionFactory()).setVisible(true);
+        });
+
         // Add table selection listener
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -204,6 +226,8 @@ public class UserDocumentView extends JFrame {
         model.addColumn("Nama");
         model.addColumn("Alamat");
         model.addColumn("Tanggal Lahir");
+        model.addColumn("Jenis Kelamin");
+        model.addColumn("No. Telepon");
         table.setModel(model);
     }
 
@@ -255,11 +279,12 @@ public class UserDocumentView extends JFrame {
 
     private void displaySelectedData(int selectedRow) {
         try {
-            // Get data from table
-            int id = (Integer) table.getValueAt(selectedRow, 0);
+            Object idObj = table.getValueAt(selectedRow, 0);
+            int id = idObj instanceof Integer ? (Integer) idObj : Integer.parseInt(idObj.toString());
+            
             txtFullName.setText((String) table.getValueAt(selectedRow, 1));
             txtAddress.setText((String) table.getValueAt(selectedRow, 2));
-
+            
             // Parse and set birth date
             String birthDateStr = (String) table.getValueAt(selectedRow, 3);
             if (birthDateStr != null && !birthDateStr.isEmpty()) {
@@ -271,6 +296,10 @@ public class UserDocumentView extends JFrame {
                     e.printStackTrace();
                 }
             }
+
+            // Set gender and phone number
+            comboGender.setSelectedItem(table.getValueAt(selectedRow, 4));
+            txtPhoneNumber.setText((String) table.getValueAt(selectedRow, 5));
 
             // Get document data from database
             UserDocument doc = controller.getUserDocumentById(id);
@@ -288,6 +317,8 @@ public class UserDocumentView extends JFrame {
         txtFullName.setText("");
         txtAddress.setText("");
         dateChooser.setDate(null);
+        comboGender.setSelectedIndex(0);
+        txtPhoneNumber.setText("");
         lblProfilePreview.setIcon(null);
         profileImageData = null;
     }
@@ -312,13 +343,18 @@ public class UserDocumentView extends JFrame {
         doc.setFullName(txtFullName.getText());
         doc.setAddress(txtAddress.getText());
         doc.setBirthDate(dateChooser.getDate());
+        doc.setGender((String) comboGender.getSelectedItem());
+        doc.setPhoneNumber(txtPhoneNumber.getText());
         doc.setProfileImage(profileImageData);
         return doc;
     }
 
     private boolean validateInput(UserDocument doc) {
-        if (doc.getFullName().isEmpty() || doc.getAddress().isEmpty() ||
-                doc.getBirthDate() == null) {
+        if (doc.getFullName().isEmpty() || 
+            doc.getAddress().isEmpty() ||
+            doc.getBirthDate() == null ||
+            doc.getGender() == null ||
+            doc.getPhoneNumber().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Semua field harus diisi!");
             return false;
         }
@@ -332,11 +368,29 @@ public class UserDocumentView extends JFrame {
 
         for (UserDocument doc : documents) {
             model.addRow(new Object[]{
-                    doc.getId(),
-                    doc.getFullName(),
-                    doc.getAddress(),
-                    doc.getBirthDate() != null ? sdf.format(doc.getBirthDate()) : ""
+                doc.getId(),
+                doc.getFullName(),
+                doc.getAddress(),
+                doc.getBirthDate() != null ? sdf.format(doc.getBirthDate()) : "",
+                doc.getGender(),
+                doc.getPhoneNumber()
             });
+        }
+    }
+
+    public void displayUserData(UserDocument doc) {
+        if (doc != null) {
+            txtFullName.setText(doc.getFullName());
+            txtAddress.setText(doc.getAddress());
+            dateChooser.setDate(doc.getBirthDate());
+            comboGender.setSelectedItem(doc.getGender());
+            txtPhoneNumber.setText(doc.getPhoneNumber());
+            
+            // Display profile image if exists
+            if (doc.getProfileImage() != null) {
+                profileImageData = doc.getProfileImage();
+                displayImagePreview(profileImageData, lblProfilePreview);
+            }
         }
     }
 }
