@@ -106,20 +106,6 @@ public class UserDocumentController {
         }
     }
 
-    // Method untuk menghapus dokumen
-    public void deleteUserDocument(int id) {
-        try (SqlSession session = sqlSessionFactory.openSession()) {
-            UserDocumentMapper mapper = session.getMapper(UserDocumentMapper.class);
-            mapper.delete(id);
-            session.commit();
-            JOptionPane.showMessageDialog(view, "Data berhasil dihapus!");
-            refreshTable();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, "Error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
     // Method untuk mengambil semua dokumen
     public List<UserDocument> getAllUserDocuments() {
         try (SqlSession session = sqlSessionFactory.openSession()) {
