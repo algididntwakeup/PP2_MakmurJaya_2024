@@ -5,10 +5,10 @@ import javax.swing.*;
 import model.User;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-public class OrderView extends JFrame {
+public class CategoriesView extends JFrame {
     private final SqlSessionFactory sqlSessionFactory;
 
-    public OrderView(User user, SqlSessionFactory sqlSessionFactory) {  // Tambah parameter SqlSessionFactory
+    public CategoriesView(User user, SqlSessionFactory sqlSessionFactory) {  // Tambah parameter SqlSessionFactory
         this.sqlSessionFactory = sqlSessionFactory;  // Simpan SqlSessionFactory
         setTitle("Halaman Order");
         setSize(600, 400);
@@ -19,7 +19,7 @@ public class OrderView extends JFrame {
         mainPanel.setBackground(new Color(245, 245, 245));
 
         // label halaman order
-        JLabel orderLabel = new JLabel("Daftar Kategori");
+        JLabel orderLabel = new JLabel("INI Daftar Kategori");
         orderLabel.setFont(new Font("Arial", Font.BOLD, 20));
         orderLabel.setHorizontalAlignment(SwingConstants.CENTER);
         orderLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));

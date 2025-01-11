@@ -68,7 +68,7 @@ public class DashboardView extends JFrame {
 
         // Create styled buttons
         JButton btnDocument = createStyledButton("Dokumen User", new Color(34, 139, 34));  // Forest Green
-        JButton btnOrder = createStyledButton("Halaman Kategori", new Color(46, 139, 87));    // Sea Green
+        JButton btnCategories = createStyledButton("Halaman Kategori", new Color(46, 139, 87));    // Sea Green
         JButton btnLogout = createStyledButton("Logout", new Color(178, 34, 34));          // Firebrick
 
         // Add action listeners
@@ -77,8 +77,8 @@ public class DashboardView extends JFrame {
             this.dispose();
         });
 
-        btnOrder.addActionListener(e -> {
-            new OrderView(user, sqlSessionFactory).setVisible(true);
+        btnCategories.addActionListener(e -> {
+            new CategoriesView(user, sqlSessionFactory).setVisible(true);
             this.dispose();
         });
 
@@ -106,7 +106,7 @@ public class DashboardView extends JFrame {
         contentPanel.add(btnDocument, contentGbc);
 
         contentGbc.gridy = 3;
-        contentPanel.add(btnOrder, contentGbc);
+        contentPanel.add(btnCategories, contentGbc);
 
         contentGbc.gridy = 4;
         contentGbc.insets = new Insets(10, 20, 20, 20);
