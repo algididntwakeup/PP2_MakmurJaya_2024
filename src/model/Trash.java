@@ -4,8 +4,9 @@ public class Trash {
     private int id;
     private String namaSampah;
     private int kategoriId;
+    private String namaKategori;  // Tambahan field untuk nama kategori
 
-    // Getter dan Setter
+    // Getter dan Setter yang sudah ada
     public int getId() {
         return id;
     }
@@ -28,5 +29,14 @@ public class Trash {
 
     public void setKategoriId(int kategoriId) {
         this.kategoriId = kategoriId;
+    }
+
+    // Tambahan getter dan setter untuk namaKategori
+    public String getNamaKategori() {
+        return namaKategori;
+    }
+
+    public void setNamaKategori(String namaKategori) {
+        this.namaKategori = namaKategori;
     }
 }
