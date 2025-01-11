@@ -8,6 +8,6 @@ import java.util.List;
 @Mapper
 public interface CategoryMapper {
 
-    @Select("SELECT id, nama_kategori FROM kategori")
+    @Select("SELECT * FROM kategori")
     List<Category> selectAllCategories();
 }
