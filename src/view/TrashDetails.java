@@ -24,7 +24,7 @@ public class TrashDetails extends JFrame {
         setLocationRelativeTo(null);
 
         // Membuat tabel untuk menampilkan data
-        String[] columnNames = {"ID", "Nama Sampah", "Kategori"};
+        String[] columnNames = {"Nama Sampah", "Kategori"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         JTable table = new JTable(tableModel);
 
@@ -38,7 +38,7 @@ public class TrashDetails extends JFrame {
 
             for (Trash trash : trashList) {
                 String kategoriName = categories.stream()
-                        .filter(k -> k.getId() == trash.getKategoriId())
+                        // .filter(k -> k.getId() == trash.getKategoriId())
                         .map(Category::getNamaKategori)  // Ganti Kategori menjadi Category
                         .findFirst()
                         .orElse("Tidak Diketahui");
