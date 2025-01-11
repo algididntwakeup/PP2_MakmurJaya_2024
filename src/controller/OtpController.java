@@ -39,7 +39,7 @@ public class OtpController {
         
         //register
         public boolean sendOtpRegister(String email, String otp) {
-            String subject = "OTP Reset Password";
+            String subject = "OTP Register";
             String body = "This Is Your OTP For Register : " + otp;
             try {
                 EmailUtil.sendEmail(email, subject, body);

@@ -19,5 +19,7 @@
         <mapper class="mapper.UserMapper"/>
         <mapper class="mapper.ProfileMapper"/>
         <mapper resource="model/UserDocumentMapper.xml"/>
+        <mapper class="mapper.CategoryMapper"/>
+        <mapper class="mapper.TrashMapper"/>
     </mappers>
 </configuration>

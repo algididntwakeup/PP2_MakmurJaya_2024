@@ -3,11 +3,19 @@ package view;
 import controller.OtpController;
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
+import javax.swing.SwingWorker;
 
 public class ForgotPasswordView extends JFrame {
 
     private OtpController controller;
     private JButton btnBack;
+    private JProgressBar progressBar;
+    private Timer progressTimer;
+    private JDialog loadingDialog;
+    private int progressValue = 0;
 
     public ForgotPasswordView() {
         controller = new OtpController();
@@ -81,18 +89,75 @@ public class ForgotPasswordView extends JFrame {
                 return;
             }
 
-            try {
-                String otp = controller.generateOTP();
-                boolean success = controller.sendOtpResetPassword(email, otp);
-                if (success) {
-                    new OtpVerificationView(email, otp).setVisible(true);
-                    this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Gagal mengirim OTP", "Kesalahan", JOptionPane.ERROR_MESSAGE);
+            showLoadingDialog();
+            progressTimer.start();
+            
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                private String otp;
+                private Exception exception;
+                
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    try {
+                        // Tunggu sampai progress mencapai sekitar 60% sebelum benar-benar mengirim OTP
+                        while (progressValue < 60) {
+                            Thread.sleep(50);
+                        }
+                        otp = controller.generateOTP();
+                        return controller.sendOtpResetPassword(email, otp);
+                    } catch (Exception ex) {
+                        exception = ex;
+                        return false;
+                    }
                 }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + ex.getMessage(), "Kesalahan", JOptionPane.ERROR_MESSAGE);
-            }
+                
+                @Override
+                protected void done() {
+                    // Tunggu sampai progress bar mencapai 100%
+                    while (progressValue < 100) {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    
+                    Timer closeTimer = new Timer(500, evt -> {
+                        ((Timer)evt.getSource()).stop();
+                        loadingDialog.dispose();
+                        
+                        try {
+                            boolean success = get();
+                            if (success) {
+                                new OtpVerificationView(email, otp).setVisible(true);
+                                ForgotPasswordView.this.dispose();
+                            } else {
+                                if (exception != null) {
+                                    JOptionPane.showMessageDialog(ForgotPasswordView.this, 
+                                        "Terjadi kesalahan: " + exception.getMessage(), 
+                                        "Kesalahan", 
+                                        JOptionPane.ERROR_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(ForgotPasswordView.this, 
+                                        "Gagal mengirim OTP", 
+                                        "Kesalahan", 
+                                        JOptionPane.ERROR_MESSAGE);
+                                }
+                            }
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(ForgotPasswordView.this, 
+                                "Terjadi kesalahan: " + ex.getMessage(), 
+                                "Kesalahan", 
+                                JOptionPane.ERROR_MESSAGE);
+                        }
+                    });
+                    closeTimer.setRepeats(false);
+                    closeTimer.start();
+                }
+            };
+            
+            worker.execute();
+            loadingDialog.setVisible(true);
         });
 
         // Tambahkan tombol kembali dengan GridBagConstraints
@@ -193,6 +258,61 @@ public class ForgotPasswordView extends JFrame {
         button.setFocusPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return button;
+    }
+
+    private void showLoadingDialog() {
+        loadingDialog = new JDialog(this, "Loading", true);
+        loadingDialog.setLayout(new BorderLayout());
+        loadingDialog.setSize(300, 100);
+        loadingDialog.setLocationRelativeTo(this);
+        loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.setBackground(Color.WHITE);
+        
+        progressBar = new JProgressBar(0, 100);
+        progressBar.setPreferredSize(new Dimension(250, 20));
+        progressBar.setStringPainted(true);
+        progressBar.setBorderPainted(true);
+        progressBar.setBackground(Color.WHITE);
+        progressBar.setForeground(new Color(34, 139, 34));
+        progressValue = 0;
+        progressBar.setValue(progressValue);
+        progressBar.setString(progressValue + "%");
+        
+        JLabel statusLabel = new JLabel("Mengirim OTP, mohon tunggu...");
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        
+        panel.add(statusLabel, BorderLayout.NORTH);
+        panel.add(progressBar, BorderLayout.CENTER);
+        
+        progressTimer = new Timer(30, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                progressValue += 1;
+                if (progressValue <= 100) {
+                    progressBar.setValue(progressValue);
+                    progressBar.setString(progressValue + "%");
+                    
+                    if (progressValue < 30) {
+                        statusLabel.setText("Mempersiapkan pengiriman OTP...");
+                    } else if (progressValue < 60) {
+                        statusLabel.setText("Menghasilkan kode OTP...");
+                    } else if (progressValue < 90) {
+                        statusLabel.setText("Mengirim OTP ke email...");
+                    } else {
+                        statusLabel.setText("Hampir selesai...");
+                    }
+                } else {
+                    ((Timer)e.getSource()).stop();
+                }
+            }
+        });
+        
+        loadingDialog.add(panel);
+        loadingDialog.setResizable(false);
     }
 
     public static void main(String[] args) {
