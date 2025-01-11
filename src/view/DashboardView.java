@@ -68,7 +68,7 @@ public class DashboardView extends JFrame {
 
         // Create styled buttons
         JButton btnDocument = createStyledButton("Dokumen User", new Color(34, 139, 34));  // Forest Green
-        JButton btnOrder = createStyledButton("Halaman Order", new Color(46, 139, 87));    // Sea Green
+        JButton btnOrder = createStyledButton("Halaman Kategori", new Color(46, 139, 87));    // Sea Green
         JButton btnLogout = createStyledButton("Logout", new Color(178, 34, 34));          // Firebrick
 
         // Add action listeners

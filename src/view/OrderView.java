@@ -19,7 +19,7 @@ public class OrderView extends JFrame {
         mainPanel.setBackground(new Color(245, 245, 245));
 
         // label halaman order
-        JLabel orderLabel = new JLabel("Daftar Order Anda");
+        JLabel orderLabel = new JLabel("Daftar Kategori");
         orderLabel.setFont(new Font("Arial", Font.BOLD, 20));
         orderLabel.setHorizontalAlignment(SwingConstants.CENTER);
         orderLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
