@@ -9,7 +9,7 @@ public class LoginView extends JFrame {
 
     public LoginView() {
         setTitle("Login Management");
-        setSize(500, 450);
+        setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

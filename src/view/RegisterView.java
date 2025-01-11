@@ -18,7 +18,7 @@ public class RegisterView extends JFrame {
         OtpController = new OtpController();
         
         setTitle("Registrasi Management");
-        setSize(500, 450);
+        setSize(700, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
